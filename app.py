@@ -7,7 +7,6 @@ inventory = []
 
 @app.route("/inventory", methods = ["GET"])
 def get_inventory():
-    inventory.append
     return jsonify(inventory)
 
 # get a single item from the inventory
@@ -38,3 +37,31 @@ def add_item():
         inventory.append(new_product)
         return jsonify(new_product),201
     return jsonify({"error":"Name, Brand and ingredients are required"})
+
+
+# add code to modify the Info
+@app.route("/inventory/<int:id>" methods = ["PATCH"])
+def update_inventory(id):
+    data = request.get_json()
+    product = data["product"]
+    name = product.get("product_name")
+    brand = product.get("brands")
+    ingredients = product.get("ingredients_text")
+
+    for item in data:
+        if item["status"] == id:
+            for item in item:
+                item["product_name"] = name
+                item["brands"] = brand
+                item["ingredients_text"] = ingredients
+                return item
+        return jsonify({"error": "Item not found"})
+
+# Code to delete an Item
+@app.route("/inventory/<int:id>" methods = ["DELETE"])
+def delete_item(id):
+    for item in inventory:
+        if item["status"] == id:
+        inventory.remove(item)
+        return "",201
+    return jsonify({"error":"Item not found"}),401
