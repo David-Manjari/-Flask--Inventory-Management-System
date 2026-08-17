@@ -32,7 +32,7 @@ def add_item():
         new_product = {"status": new_id,
                         "product":{
                             "product_name" = name,
-                            "brands": brand
+                            "brands": brand,
                             "ingredients_text": ingredients
                         }}
         inventory.append(new_product)
