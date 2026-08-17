@@ -7,7 +7,20 @@ const form = document.getElementById("Form")
 
 form.addEventListener("submit", (event) =>{
     event.preventDefault();
+    if (name.value ===""){
+        alert("Fill the product name field")
+        return;
+    }
+    if (brand.value ===""){
+        alert("Fill in the brand")
+        return;
+    }
 
+    if(ingredients.value ===""){
+        alert("Add the ingredients")
+        return;
+    }
+       
 
     const product = {product_name: name.value,
                      brand: brand.value,
@@ -22,8 +35,8 @@ function RenderProduct(product){
     const brand = document.createElement("li")
     const ingredient = document.createElement("li")
     const details = document.createElement("ul")
-    brand.textContent = product["brand"]
-    ingredient.textContent = product["ingredient"]
+    brand.textContent = "Brand: " + product["brand"]
+    ingredient.textContent = "Ingredients: " + product["ingredients"]
     name.textContent = product['product_name']
     
     details.appendChild(brand)
