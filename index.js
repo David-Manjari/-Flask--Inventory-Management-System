@@ -25,6 +25,18 @@ form.addEventListener("submit", (event) =>{
     const product = {product_name: name.value,
                      brand: brand.value,
                     ingredients: ingredients.value}
+    
+// create a methid to add the information to the backend
+        const ressponse = await fetch("/inventory",{
+            method: "POST",
+            headers: {
+                "Content-Type": "applicatio/json"
+            },
+            body: JSON.stringify(product)
+        });
+
+        // await response from backend
+        const response= await response.JSON()
     RenderProduct(product)
 })
 
