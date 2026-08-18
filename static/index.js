@@ -17,16 +17,16 @@ form.addEventListener("submit",async (event) =>{
     const name = document.getElementById("name");
     const brand = document.getElementById("brand");
     const ingredients = document.getElementById("ingredients")
-    if (name.value ===""){
+    if (name.value.trim() ===""){
         alert("Fill the product name field")
         return;
     }
-    if (brand.value ===""){
+    if (brand.value.trim() ===""){
         alert("Fill in the brand")
         return;
     }
 
-    if(ingredients.value ===""){
+    if(ingredients.value.trim() ===""){
         alert("Add the ingredients")
         return;
     }
