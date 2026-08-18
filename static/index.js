@@ -10,6 +10,7 @@ fetch("/inventory")
 
 
 const form = document.getElementById("Form")
+let editProduct = null
 
 form.addEventListener("submit",async (event) =>{
     event.preventDefault();
@@ -38,6 +39,7 @@ form.addEventListener("submit",async (event) =>{
                 }
     
 // create a method to add the information to the backend
+
         const response = await fetch("/inventory",{
             method: "POST",
             headers: {
@@ -63,9 +65,17 @@ function RenderProduct(product){
     ingredient.textContent = "Ingredients: " + product['ingredients_text']
     name.textContent = product['product_name']
 
+
+    const editButton = document.createElement("button")
+    editButton.textContent = "EDIT";
+    editButton.addEventListener("click",  () =>{
+        
+        editProduct = product.id;
+        alert("product id picked")
+    })
+    //  A function to delete an element
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
-
     deleteButton.addEventListener("click", async () => {
         const response = await fetch(`/inventory/${product.id}`, {
             method: "DELETE"
@@ -83,5 +93,6 @@ function RenderProduct(product){
     newList.appendChild(name)
     newList.appendChild(details)
     newList.appendChild(deleteButton)
+    newList.appendChild(editButton)
     RenderList.appendChild(newList)
 }   
