@@ -1,10 +1,10 @@
-from flask import Flask, request,session
+from flask import Flask, request,session, jsonify
 import math
 
 app = Flask(__name__)
 
 inventory = []
-
+# code to fetch data from api
 def get_product_api(barcode):
     url = url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
     response = response.get(url)
@@ -46,7 +46,7 @@ def add_item():
     if name and brand and ingredients:
 
         new_product = {"id": new_id,
-                            "product_name" = name,
+                            "product_name" : name,
                             "brands": brand,
                             "ingredients_text": ingredients
                         }
@@ -77,6 +77,6 @@ def update_inventory(id):
 def delete_item(id):
     for item in inventory:
         if item["id"] == id:
-        inventory.remove(item)
-        return "",201
-    return jsonify({"error":"Item not found"}),401
+            inventory.remove(item)
+            return "",201
+        return jsonify({"error":"Item not found"}),401
