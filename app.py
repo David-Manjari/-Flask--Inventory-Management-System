@@ -1,4 +1,4 @@
-from flask import Flask, request,session
+from flask import Flask, request,session, jsonify, render_template
 import math
 
 app = Flask(__name__)
@@ -21,7 +21,9 @@ def get_product_api(barcode):
     new_item = ({"id":new_id,  "product_name":name,"brands":brand,"ingredients_text":ingredients})
     inventory.append(new_item)
 
-
+@app.route("/")
+def home():
+    return render_template("index.html")
 @app.route("/inventory", methods = ["GET"])
 def get_inventory():
     return jsonify(inventory)
@@ -38,7 +40,7 @@ def get_item(id):
 @app.route("/inventory", methods = ["POST"])
 def add_item():
     data = request.get_json()
-    product = data["product"]
+    product = data
     name = product.get("product_name")
     brand = product.get("brands")
     ingredients = product.get("ingredients_text")
@@ -46,7 +48,7 @@ def add_item():
     if name and brand and ingredients:
 
         new_product = {"id": new_id,
-                            "product_name" = name,
+                            "product_name" : name,
                             "brands": brand,
                             "ingredients_text": ingredients
                         }
@@ -56,7 +58,7 @@ def add_item():
 
 
 # add code to modify the Info
-@app.route("/inventory/<int:id>" methods = ["PATCH"])
+@app.route("/inventory/<int:id>", methods = ["PATCH"])
 def update_inventory(id):
     data = request.get_json()
     product = data["product"]
@@ -73,10 +75,14 @@ def update_inventory(id):
         return jsonify({"error": "Item not found"})
 
 # Code to delete an Item
-@app.route("/inventory/<int:id>" methods = ["DELETE"])
+@app.route("/inventory/<int:id>", methods = ["DELETE"])
 def delete_item(id):
     for item in inventory:
         if item["id"] == id:
-        inventory.remove(item)
-        return "",201
-    return jsonify({"error":"Item not found"}),401
+            inventory.remove(item)
+            return "",200
+        return jsonify({"error":"Item not found"}),404
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
