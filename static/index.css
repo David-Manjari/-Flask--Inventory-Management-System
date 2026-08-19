@@ -1,0 +1,90 @@
+@media screen and (min-width) and (max-width){
+      body {
+        font-size: 16px;
+    }
+
+    form {
+        width: 90%;
+    }
+
+    input {
+        width: 100%;
+    }
+
+}
+@media screen and (max-width: 480px) {
+label {
+    display: grid;
+    grid-template-columns: 40vw auto;
+    gap: 10px;
+    align-items: center;
+}
+
+input,
+select {
+    width: 100vw;
+    box-sizing: border-box;
+}
+
+}
+* {
+    box-sizing: border-box;
+}
+
+body{
+    background-color: rgb(40, 51, 141);
+    display: flex;
+    gap: 1opx;
+    flex-direction: column;
+}
+#Form{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+#content{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(37, 161, 186);
+    align-items: center;
+    align-content: center;
+    gap: 10px;
+    border-radius: 40px;
+    border-width: 20px;
+    padding: 20px;   
+    flex-wrap: wrap;
+}
+
+label {
+    display: grid;
+    grid-template-columns: 120px auto;
+    gap: 10px;
+    align-items: center;
+}
+
+input,
+select {
+    width: auto;
+    box-sizing: border-box;
+}
+
+#view_list ul{
+    text-transform: uppercase;
+    font-size: large;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#view_list ul ul{
+    text-transform: capitalize;
+    font-size: medium;
+    font-weight: 400;
+    font-style: italic
+}
+#view_list ul button{
+    margin-right: 20px;
+    margin-right: 20px;
+    width: 70px;
+    height: 25px;
+    text-align: center;
+    text-transform: uppercase;
+
+}

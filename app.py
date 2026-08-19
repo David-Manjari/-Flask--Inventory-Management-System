@@ -84,8 +84,8 @@ def delete_item(id):
         if item["id"] == id:
             inventory.remove(item)
             return "",200
-        return jsonify({"error":"Item not found"}),404
-
+            return jsonify({"error":"Item not found"}),404
+    return jsonify({"error": "Item not found"}), 404
 
 if __name__ == "__main__":
     app.run(debug=True)
