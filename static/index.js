@@ -89,6 +89,7 @@ if(edit){
         
         alert("Item Edited")
         sessionStorage.removeItem("editProduct");
+        window.opener.location.reload();
         window.close()
     })
 }
