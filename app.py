@@ -1,26 +1,69 @@
 from flask import Flask, request,session, jsonify, render_template
 import math
+import requests
 
 app = Flask(__name__)
 
 inventory = []
 # code to fetch data from api
+import requests
+
+import requests
+
 def get_product_api(barcode):
-    url = url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
-    response = response.get(url)
+    url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
+
+    headers = {
+    "User-Agent": "InventoryManagementSystem/1.0 (your-email@example.com)"
+}
+
+    response = requests.get(url, headers=headers)
+    print("URL:", url)
+    print("STATUS:", response.status_code)
+    print("CONTENT TYPE:", response.headers.get("Content-Type"))
+    print("RESPONSE:", response.text[:500])
+
     if response.status_code != 200:
         return None
-    data = response.json()
-    new_id = len(inventory) +1
+
+    try:
+        data = response.json()
+    except requests.exceptions.JSONDecodeError:
+        print("Response was not JSON")
+        return None
+
     product = data.get("product")
 
-    name = product.get("product_name")
-    brand = product.get("brands")
-    ingredients = product.get("ingredients_text")
-   
-    new_item = ({"id":new_id,  "product_name":name,"brands":brand,"ingredients_text":ingredients})
+    if not product:
+        return None
+
+    new_id = max(
+        (item["id"] for item in inventory),
+        default=0
+    ) + 1
+
+    new_item = {
+        "id": new_id,
+        "product_name": product.get("product_name"),
+        "brands": product.get("brands"),
+        "ingredients_text": product.get("ingredients_text")
+    }
+
     inventory.append(new_item)
 
+    return new_item
+@app.route("/test/<barcode>", methods=["GET"])
+def get_product(barcode):
+    print("BARCODE RECEIVED:", barcode)
+
+    result = get_product_api(barcode)
+
+    print("RESULT:", result)
+
+    return jsonify({
+        "barcode": barcode,
+        "result": result
+    })
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -88,4 +131,5 @@ def delete_item(id):
     return jsonify({"error": "Item not found"}), 404
 
 if __name__ == "__main__":
+    print(app.url_map)
     app.run(debug=True)
