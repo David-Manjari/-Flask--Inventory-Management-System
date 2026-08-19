@@ -24,6 +24,9 @@ def get_product_api(barcode):
 @app.route("/")
 def home():
     return render_template("index.html")
+@app.route("/editForm")
+def edit():
+    return render_template("editForm.html")
 @app.route("/inventory", methods = ["GET"])
 def get_inventory():
     return jsonify(inventory)
@@ -61,18 +64,18 @@ def add_item():
 @app.route("/inventory/<int:id>", methods = ["PATCH"])
 def update_inventory(id):
     data = request.get_json()
-    product = data["product"]
-    name = product.get("product_name")
-    brand = product.get("brands")
-    ingredients = product.get("ingredients_text")
+    for product in inventory:
+        if product["id"] == id:
+            if "product_name" in data:
+                product["product_name"] = data["product_name"]
+            if "brands" in data:
+                product["brands"] = data["brands"]
 
-    for item in data:
-        if item["id"] == id:
-            item["product_name"] = name
-            item["brands"] = brand
-            item["ingredients_text"] = ingredients
-            return item
-        return jsonify({"error": "Item not found"})
+            if "ingredients_text" in data:
+                product["ingredients_text"] = data["ingredients_text"]
+
+            return jsonify(product),200
+    return jsonify({"error":"Item not found"})
 
 # Code to delete an Item
 @app.route("/inventory/<int:id>", methods = ["DELETE"])
