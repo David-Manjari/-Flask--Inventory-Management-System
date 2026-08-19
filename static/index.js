@@ -70,8 +70,8 @@ if(edit){
         const editProduct = sessionStorage.getItem("editProduct");
         const field = document.getElementById("select").value
         const value = document.getElementById("input").value
-
-        const editData = {
+        if(value.trim() !=""){
+             const editData = {
             [field]: value
         }
         alert(`${editProduct}`)
@@ -91,6 +91,10 @@ if(edit){
         sessionStorage.removeItem("editProduct");
         window.opener.location.reload();
         window.close()
+        }
+       else{
+        alert("Input The content to be changed")
+       }
     })
 }
 function RenderProduct(product){
