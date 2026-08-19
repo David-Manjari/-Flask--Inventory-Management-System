@@ -1,4 +1,4 @@
-from flask import Flask, request,session, jsonify
+from flask import Flask, request,session, jsonify, render_template
 import math
 
 app = Flask(__name__)
@@ -21,7 +21,12 @@ def get_product_api(barcode):
     new_item = ({"id":new_id,  "product_name":name,"brands":brand,"ingredients_text":ingredients})
     inventory.append(new_item)
 
-
+@app.route("/")
+def home():
+    return render_template("index.html")
+@app.route("/editForm")
+def edit():
+    return render_template("editForm.html")
 @app.route("/inventory", methods = ["GET"])
 def get_inventory():
     return jsonify(inventory)
@@ -38,7 +43,7 @@ def get_item(id):
 @app.route("/inventory", methods = ["POST"])
 def add_item():
     data = request.get_json()
-    product = data["product"]
+    product = data
     name = product.get("product_name")
     brand = product.get("brands")
     ingredients = product.get("ingredients_text")
@@ -56,27 +61,31 @@ def add_item():
 
 
 # add code to modify the Info
-@app.route("/inventory/<int:id>" methods = ["PATCH"])
+@app.route("/inventory/<int:id>", methods = ["PATCH"])
 def update_inventory(id):
     data = request.get_json()
-    product = data["product"]
-    name = product.get("product_name")
-    brand = product.get("brands")
-    ingredients = product.get("ingredients_text")
+    for product in inventory:
+        if product["id"] == id:
+            if "product_name" in data:
+                product["product_name"] = data["product_name"]
+            if "brands" in data:
+                product["brands"] = data["brands"]
 
-    for item in data:
-        if item["id"] == id:
-            item["product_name"] = name
-            item["brands"] = brand
-            item["ingredients_text"] = ingredients
-            return item
-        return jsonify({"error": "Item not found"})
+            if "ingredients_text" in data:
+                product["ingredients_text"] = data["ingredients_text"]
+
+            return jsonify(product),200
+    return jsonify({"error":"Item not found"})
 
 # Code to delete an Item
-@app.route("/inventory/<int:id>" methods = ["DELETE"])
+@app.route("/inventory/<int:id>", methods = ["DELETE"])
 def delete_item(id):
     for item in inventory:
         if item["id"] == id:
             inventory.remove(item)
-            return "",201
-        return jsonify({"error":"Item not found"}),401
+            return "",200
+        return jsonify({"error":"Item not found"}),404
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
