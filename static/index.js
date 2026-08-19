@@ -10,15 +10,24 @@ fetch("/inventory")
 
 
 const form = document.getElementById("Form")
-let editProduct = null
+const editProduct =  sessionStorage.getItem("editProduct")
 
-form.addEventListener("submit",async (event) =>{
+if(form){
+    form.addEventListener("submit",async (event) =>{
     event.preventDefault();
 
     const name = document.getElementById("name");
     const brand = document.getElementById("brand");
     const ingredients = document.getElementById("ingredients")
-    if (name.value.trim() ===""){
+
+     const product = {product_name: name.value,
+                     brands: brand.value,
+                    ingredients_text: ingredients.value
+                }
+
+    
+   
+        if (name.value.trim() ===""){
         alert("Fill the product name field")
         return;
     }
@@ -33,10 +42,7 @@ form.addEventListener("submit",async (event) =>{
     }
 
 
-    const product = {product_name: name.value,
-                     brands: brand.value,
-                    ingredients_text: ingredients.value
-                }
+   
     
 // create a method to add the information to the backend
 
@@ -52,8 +58,40 @@ form.addEventListener("submit",async (event) =>{
         const feedback = await response.json()
         console.log(feedback.id)
     RenderProduct(feedback)
+    
+    
 })
+}
+const edit = document.getElementById("editForm")
+if(edit){
+     
+    edit.addEventListener("submit", async (event) =>{
+        event.preventDefault()
+        const editProduct = sessionStorage.getItem("editProduct");
+        const field = document.getElementById("select").value
+        const value = document.getElementById("input").value
 
+        const editData = {
+            [field]: value
+        }
+        alert(`${editProduct}`)
+            const response = await fetch (`/inventory/${editProduct}`,{
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(editData)
+            })
+            const result = await response.json()
+            if(!response.ok){
+                alert("failed to Update")
+            }
+        
+        alert("Item Edited")
+        sessionStorage.removeItem("editProduct");
+        window.close()
+    })
+}
 function RenderProduct(product){
     const RenderList = document.getElementById('view_list')
     const newList = document.createElement("ul")
@@ -69,8 +107,8 @@ function RenderProduct(product){
     const editButton = document.createElement("button")
     editButton.textContent = "EDIT";
     editButton.addEventListener("click",  () =>{
-        
-        editProduct = product.id;
+        sessionStorage.setItem("editProduct", product.id)
+        window.open(`/editForm`, "_blank");
         alert("product id picked")
     })
     //  A function to delete an element
@@ -87,7 +125,9 @@ function RenderProduct(product){
         else
             alert("Could not delete Product")
     });
-    
+    const container= document.getElementById('view')
+    if (!container)
+        rerurn
     details.appendChild(brand)
     details.appendChild(ingredient)
     newList.appendChild(name)
