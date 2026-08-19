@@ -4,7 +4,7 @@ import math
 app = Flask(__name__)
 
 inventory = []
-
+# code to fetch data from api
 def get_product_api(barcode):
     url = url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
     response = response.get(url)
