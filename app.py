@@ -1,0 +1,91 @@
+from flask import Flask, request,session, jsonify, render_template
+import math
+
+app = Flask(__name__)
+
+inventory = []
+# code to fetch data from api
+def get_product_api(barcode):
+    url = url = f"https://world.openfoodfacts.org/api/v2/product/{barcode}.json"
+    response = response.get(url)
+    if response.status_code != 200:
+        return None
+    data = response.json()
+    new_id = len(inventory) +1
+    product = data.get("product")
+
+    name = product.get("product_name")
+    brand = product.get("brands")
+    ingredients = product.get("ingredients_text")
+   
+    new_item = ({"id":new_id,  "product_name":name,"brands":brand,"ingredients_text":ingredients})
+    inventory.append(new_item)
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+@app.route("/editForm")
+def edit():
+    return render_template("editForm.html")
+@app.route("/inventory", methods = ["GET"])
+def get_inventory():
+    return jsonify(inventory)
+
+# get a single item from the inventory
+@app.route("/inventory/<int:id>", methods = ["GET"])
+def get_item(id):
+    for item in inventory:
+        if item["id"] == id:
+            return jsonify(item)
+    return jsonify({"message": "Item Not Present"}),404
+
+# Post an item to the api
+@app.route("/inventory", methods = ["POST"])
+def add_item():
+    data = request.get_json()
+    product = data
+    name = product.get("product_name")
+    brand = product.get("brands")
+    ingredients = product.get("ingredients_text")
+    new_id = len(inventory) +1
+    if name and brand and ingredients:
+
+        new_product = {"id": new_id,
+                            "product_name" : name,
+                            "brands": brand,
+                            "ingredients_text": ingredients
+                        }
+        inventory.append(new_product)
+        return jsonify(new_product),201
+    return jsonify({"error":"Name, Brand and ingredients are required"})
+
+
+# add code to modify the Info
+@app.route("/inventory/<int:id>", methods = ["PATCH"])
+def update_inventory(id):
+    data = request.get_json()
+    for product in inventory:
+        if product["id"] == id:
+            if "product_name" in data:
+                product["product_name"] = data["product_name"]
+            if "brands" in data:
+                product["brands"] = data["brands"]
+
+            if "ingredients_text" in data:
+                product["ingredients_text"] = data["ingredients_text"]
+
+            return jsonify(product),200
+    return jsonify({"error":"Item not found"})
+
+# Code to delete an Item
+@app.route("/inventory/<int:id>", methods = ["DELETE"])
+def delete_item(id):
+    for item in inventory:
+        if item["id"] == id:
+            inventory.remove(item)
+            return "",200
+        return jsonify({"error":"Item not found"}),404
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
